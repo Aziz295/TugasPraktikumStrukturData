@@ -1,0 +1,149 @@
+#include <iostream>
+#include <string>
+#include <thread>  
+#include <chrono>   
+#include <cstdlib> 
+
+using namespace std;
+
+struct Mahasiswa {
+    string nama;
+    string nim;
+    string gender;
+    float nilai;
+    Mahasiswa* next;
+};
+
+Mahasiswa* topStack = nullptr;
+
+void animasi(string teks) {
+    for (int i = 0; i < 3; i++) {
+        cout << teks;
+        for (int j = 0; j <= i; j++) cout << ".";
+        cout << "\r";
+        cout.flush();
+        this_thread::sleep_for(chrono::milliseconds(400));
+    }
+    cout << "                      \r";
+}
+
+
+void push(string nama, string nim, string gender, float nilai) {
+    Mahasiswa* baru = new Mahasiswa();
+    baru->nama = nama;
+    baru->nim = nim;
+    baru->gender = gender;
+    baru->nilai = nilai;
+    baru->next = topStack;
+    topStack = baru;
+
+    cout << "\n?? Menambahkan data ke Stack..." << endl;
+    animasi("PUSHING");
+    cout << "? Data '" << nama << "' berhasil ditambahkan!\n";
+}
+
+void pop() {
+    if (topStack == nullptr) {
+        cout << "\n??  Stack kosong, tidak ada data yang bisa dihapus!\n";
+        return;
+    }
+
+    cout << "\n???  Menghapus data teratas dari Stack..." << endl;
+    animasi("POPPING");
+
+    Mahasiswa* hapus = topStack;
+    topStack = topStack->next;
+    cout << "? Data '" << hapus->nama << "' berhasil dihapus!\n";
+    delete hapus;
+}
+
+void display() {
+    if (topStack == nullptr) {
+        cout << "\n??  Stack kosong, belum ada data mahasiswa!\n";
+        return;
+    }
+
+    Mahasiswa* bantu = topStack;
+    int i = 1;
+
+    cout << "\n?? Daftar Data Mahasiswa dalam Stack (Top ? Bottom):\n";
+    cout << "--------------------------------------------------------\n";
+    while (bantu != nullptr) {
+        cout << i++ << ". NAMA   : " << bantu->nama << endl;
+        cout << "   NIM    : " << bantu->nim << endl;
+        cout << "   GENDER : " << bantu->gender << endl;
+        cout << "   NILAI  : " << bantu->nilai << endl;
+        cout << "--------------------------------------------------------\n";
+        bantu = bantu->next;
+    }
+}
+
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+void menu() {
+    int pilihan;
+    string nama, nim, gender;
+    float nilai;
+
+    do {
+        cout << "============================================\n";
+        cout << "?? PROGRAM STACK LINKED LIST DATA MAHASISWA\n";
+        cout << "============================================\n";
+        cout << "1. INSERT DATA (Push)\n";
+        cout << "2. HAPUS DATA (Pop)\n";
+        cout << "3. CETAK DATA (Display)\n";
+        cout << "4. EXIT\n";
+        cout << "============================================\n";
+        cout << "Pilih menu [1-4] : ";
+        cin >> pilihan;
+        cin.ignore();
+
+        switch (pilihan) {
+        case 1:
+            cout << "\nMasukkan Nama Mahasiswa : ";
+            getline(cin, nama);
+            cout << "Masukkan NIM            : ";
+            getline(cin, nim);
+            cout << "Masukkan Gender (L/P)   : ";
+            getline(cin, gender);
+            cout << "Masukkan Nilai Struktur Data : ";
+            cin >> nilai;
+            cin.ignore();
+            push(nama, nim, gender, nilai);
+            break;
+
+        case 2:
+            pop();
+            break;
+
+        case 3:
+            display();
+            break;
+
+        case 4:
+            cout << "\n?? Terima kasih telah menggunakan program ini!\n";
+            break;
+
+        default:
+            cout << "\n? Pilihan tidak valid, coba lagi!\n";
+        }
+
+        if (pilihan != 4) {
+            cout << "\nTekan Enter untuk kembali ke menu...";
+            cin.get();
+            clearScreen();
+        }
+    } while (pilihan != 4);
+}
+
+int main() {
+    menu();
+    return 0;
+}
+
